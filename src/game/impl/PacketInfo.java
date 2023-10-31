@@ -1,3 +1,3 @@
 package game.impl;
 
-public enum PacketInfo {};
+public enum PacketInfo {downStream};
