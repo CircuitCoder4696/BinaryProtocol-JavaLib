@@ -104,7 +104,7 @@ public class TCP {
         public void write(ServerBuff buff) {
             try {
                 OutputStream oStream= this.sock.getOutputStream();
-                oStream.write(buff.request.array());
+                oStream.write(buff.response.array());
             } catch(IOException ex) {};
         };
     };
