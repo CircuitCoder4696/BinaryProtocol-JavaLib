@@ -1,17 +1,33 @@
 package test;
 
-import impl.io.PacketBuff;
+import impl.io.ServerBuff;
 import impl.io.TCP;
 
-public class TestServer extends PacketBuff {
+public class TestServer extends ServerBuff {
     public static void main(String[] av) {
         TCP.Server server= new TCP.Server(25600);
-        TCP.Client client= server.__accept();
-        TestServer buff= new TestServer(client);
-        client.read(buff);   //   This is where the server being broken becomes obvious, the question is how is it broken and how can the problem be resolved.  it forces the client's connection to be reset immediately on connection, causing problems.  
+        while(server.running) {
+            TCP.Client client= server.__accept();
+            log.info("Server accepted client.  ");
+            TestServer buff= new TestServer(client);
+            client.read(buff);   //   Reads data from the packet into a buffer.
+            buff.onCall(client.ipAddress, client.port);
+            client.write(buff);   //   Sends the data back to the client, by writing the response into the packet.
+        };
     };
     public TestServer(TCP.Client client) { super(client); };
-    @Override public void onCall(String ipAddr, int port) {
-        log.info(String.format("%s;", readReqLong()));
+    @Override public void onCall(String ipAddr, int port) {   //   This method should read data from the client, and process that data.  The buffer the server reads from is separate from the buffer the server writes to.
+        int a= readReqInt();
+        int b= readReqInt();
+        log.info(String.format("a= %s;", a));
+        log.info(String.format("b= %s;", b));
+        response.position(0);
+        writeResInt(a + b);
+        int reqPos= request.position();
+        int resPos= response.position();
+        response.position(0);
+        log.info(String.valueOf(response.getInt()));
+        request.position(reqPos);
+        response.position(resPos);
     };
 };

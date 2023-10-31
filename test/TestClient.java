@@ -1,18 +1,25 @@
 package test;
 
-import impl.io.PacketBuff;
+import impl.io.ClientBuff;
 import impl.io.TCP;
 
-public class TestClient extends PacketBuff {
+public class TestClient extends ClientBuff {
     public static void main(String[] av) {
         TCP.Client client= new TCP.Client("localhost",25600);
         TestClient buff= new TestClient(client);
-        buff.request.putInt(450000);
-        buff.request.putFloat(3.75f);
-        client.read(buff);   //   The client crashes because the server forces it to crash due to the server being broken in the way that it is.
+        buff.onSend(client);   //   Writes data to the buffer.
+        client.write(buff);   //   Sends the buffer data in a packet.
+        //Error:   The server doesn't seem to be writing the correct response for some reason.
+        client.read(buff);   //   Recieves a packet and places the data into the buffer.
+        buff.onRecv(client);   //   Reads data from the buffer.
     };
     public TestClient(TCP.Client client) { super(client); };
-    @Override public void onCall(String ipAddr, int port) {
-        log.info("Listen for request on the server-side.  ");
+    @Override public void onSend(TCP.Client client) {
+        writeReqInt(450000);
+        writeReqInt(3750000);
+    };
+    @Override public void onRecv(TCP.Client client) {
+        int result= readResInt();
+        System.out.println(String.format("The server added both integers and returned the result %s.  ", result));
     };
 };
