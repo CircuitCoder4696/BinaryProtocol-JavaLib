@@ -1,8 +1,5 @@
 package impl.io;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-
 public abstract class ClientBuff extends PacketBuff {
     public boolean running= true;
     protected static Logger log= new Logger();
@@ -87,7 +84,8 @@ public abstract class ClientBuff extends PacketBuff {
         this.response.get(result);
         return new String(result);
     };
-    public abstract byte[] call(String ipAddr, int port, byte[] call);   //   Write an override in your client to handle the binary-protocol for a game, or app.  
+    public abstract void onSend(TCP.Client client);   //   Write an override in your client to handle genderating the binary-data for a game or app.
+    public abstract void onRecv(TCP.Client client);   //   Write an override in your client to handle parsing and processing the bidary-data for a game or app.
     @Override public void run() {
         int limit= 4;
         while(running && (limit--) > 0) {

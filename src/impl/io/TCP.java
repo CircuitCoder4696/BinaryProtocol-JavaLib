@@ -65,7 +65,7 @@ public class TCP {
                 System.out.println(size);
                 return dsData;
             } catch (IOException ex) {
-                log.error("Could not establish connection, to process an inet-call.  ");
+                log.error("Could not establish connection, to process an inet-onSend.  ");
                 ex.printStackTrace();
             };
             return null;
@@ -82,7 +82,7 @@ public class TCP {
                 ex.printStackTrace();
             };
         };
-        public void write(ServerBuff buff) {
+        public void write(ClientBuff buff) {
             try {
                 OutputStream oStream= this.sock.getOutputStream();
                 oStream.write(buff.request.array());

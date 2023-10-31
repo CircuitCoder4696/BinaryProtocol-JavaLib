@@ -17,5 +17,4 @@ public abstract class PacketBuff extends Thread {
     public PacketBuff(TCP.Client client) {
         this.client= client;
     };
-    public abstract void onCall(String ipAddr, int port);
 };
