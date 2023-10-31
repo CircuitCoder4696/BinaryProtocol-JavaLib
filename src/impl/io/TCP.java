@@ -70,7 +70,7 @@ public class TCP {
             };
             return null;
         };
-        public void read(PacketBuff buff) {   /**
+        public void read(ServerBuff buff) {   /**
          Provides input for the server, all the client needs to do is read the packet and taking in the packet-buffer to write to.
          **/
             try {
@@ -81,6 +81,12 @@ public class TCP {
             } catch (IOException ex) {
                 ex.printStackTrace();
             };
+        };
+        public void write(ServerBuff buff) {
+            try {
+                OutputStream oStream= this.sock.getOutputStream();
+                oStream.write(buff.request.array());
+            } catch(IOException ex) {};
         };
     };
 };

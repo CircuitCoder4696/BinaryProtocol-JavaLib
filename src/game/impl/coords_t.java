@@ -1,8 +1,8 @@
 package game.impl;
 
-import impl.io.PacketBuff;
+import impl.io.ServerBuff;
 
 public interface coords_t extends entityData_t {
-    public void decodeReq(PacketBuff buff);
-    public void encodeRes(PacketBuff buff);
+    public void decodeReq(ServerBuff buff);
+    public void encodeRes(ServerBuff buff);
 };

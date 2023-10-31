@@ -1,12 +1,12 @@
 package impl.notch;
 
-import impl.io.PacketBuff;
+import impl.io.ServerBuff;
 
 public class Types {
     private static final int SEGMENT_BITS = 0x7F;
     private static final int CONTINUE_BIT = 0x80;
-    private final PacketBuff buff;
-    public Types(PacketBuff buff) {
+    private final ServerBuff buff;
+    public Types(ServerBuff buff) {
         this.buff= buff;
     };
     public int readVarInt() {
