@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 public class TCP {
     public static class Server {
+        public boolean running= true;
         private ServerSocket ss;
         public String ipAddr= "127.0.0.1";
         public int port= 8080;
@@ -70,6 +71,18 @@ public class TCP {
             };
             return null;
         };
+        public void read(ClientBuff buff) {   /**
+         Provides input for the server, all the client needs to do is read the packet and taking in the packet-buffer to write to.
+         **/
+            try {
+                DataInputStream dataInputStream= new DataInputStream(new BufferedInputStream(this.sock.getInputStream()));
+                int size= dataInputStream.read(reqD);
+                buff.response= ByteBuffer.allocate(size).put(reqD, 0, size).position(0).order(ByteOrder.LITTLE_ENDIAN);
+                buff.response.position(0);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            };
+        };
         public void read(ServerBuff buff) {   /**
          Provides input for the server, all the client needs to do is read the packet and taking in the packet-buffer to write to.
          **/
@@ -83,6 +96,12 @@ public class TCP {
             };
         };
         public void write(ClientBuff buff) {
+            try {
+                OutputStream oStream= this.sock.getOutputStream();
+                oStream.write(buff.request.array());
+            } catch(IOException ex) {};
+        };
+        public void write(ServerBuff buff) {
             try {
                 OutputStream oStream= this.sock.getOutputStream();
                 oStream.write(buff.request.array());
