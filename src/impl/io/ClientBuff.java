@@ -16,7 +16,7 @@ public abstract class ClientBuff extends PacketBuff {
         if(value >= stop)return false;
         return true;
     };
-    protected void readRes(byte[] data) {
+    public void readRes(byte[] data) {
         this.response.get(data);
     };
     protected void readRes(char[] data) {
@@ -43,7 +43,7 @@ public abstract class ClientBuff extends PacketBuff {
         int i,j= data.length;
         for(i=0;i<j;i++)data[i]= this.response.getDouble();
     };
-    protected void writeReq(byte[] data) {
+    public void writeReq(byte[] data) {
         this.request.put(data);
     };
     protected void writeReq(char[] data) {
@@ -86,10 +86,4 @@ public abstract class ClientBuff extends PacketBuff {
     };
     public abstract void onSend(TCP.Client client);   //   Write an override in your client to handle genderating the binary-data for a game or app.
     public abstract void onRecv(TCP.Client client);   //   Write an override in your client to handle parsing and processing the bidary-data for a game or app.
-    @Override public void run() {
-        int limit= 4;
-        while(running && (limit--) > 0) {
-            System.out.println("Ran thread.  ");
-        };
-    };
 };

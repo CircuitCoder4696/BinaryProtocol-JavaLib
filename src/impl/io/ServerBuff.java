@@ -1,14 +1,22 @@
 package impl.io;
 
-import impl.io.Logger;
-
-import java.net.Socket;
+import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 public abstract class ServerBuff extends PacketBuff {
     public boolean running= true;
     protected static Logger log= new Logger();
+    public int sliceStart, sliceStop;
+    public void setSliceOffsets(int size) {   //   `-1` sets both the packet-start and packet-stop to 0, and the `packetDataRemaining` tells you how much data is left in the slice.
+        this.sliceStart= this.request.position();
+        this.sliceStop = this.sliceStart + size;
+        if(size == -1) {
+            this.sliceStart= 0;
+            this.sliceStop= 0;
+        };
+    };
+    public int sliceRemaining() { return this.sliceStop - this.request.position(); };
     public byte readReqByte() { return this.request.get(); };
     protected short readReqShort() { return this.request.getShort(); };
     public int readReqInt() { return this.request.getInt(); };
@@ -17,13 +25,32 @@ public abstract class ServerBuff extends PacketBuff {
     public void writeResShort(short value) { this.response.putShort(value); };
     public void writeResInt(int value) { this.response.putInt(value); };
     public void writeResLong(long value) { this.response.putLong(value); };
+    public byte[] getReq() {
+        int size= this.request.limit() - this.request.position();
+        byte[] result= new byte[size];
+        this.request.get(result);
+        return result;
+    };
+    public byte[] getReq(int size) {
+        int _size= Math.min(this.request.limit() - this.request.position(), size);
+        byte[] result= new byte[size];
+        int i;
+        for(i=0;i<_size;i++)
+            result[i]= this.request.get();
+        return result;
+    };
     protected static boolean between(int start, int value, int stop) {
         if(value < start)return false;
         if(value >= stop)return false;
         return true;
     };
-    protected void readReq(byte[] data) {
-        this.request.get(data);
+    public void readReq(byte[] data) {
+        if((this.request.limit() - this.request.position()) < data.length)log.critical("Can't read outside the buffer!  ");
+        try {
+            this.request.get(data);
+        } catch (BufferOverflowException ex) {
+            log.critical("Buffer underflow exception!  ");
+        };
     };
     protected void readReq(char[] data) {
         int i,j= data.length;
@@ -49,7 +76,7 @@ public abstract class ServerBuff extends PacketBuff {
         int i,j= data.length;
         for(i=0;i<j;i++)data[i]= this.request.getDouble();
     };
-    protected void writeRes(byte[] data) {
+    public void writeRes(byte[] data) {
         this.response.put(data);
     };
     protected void writeRes(char[] data) {
@@ -79,7 +106,7 @@ public abstract class ServerBuff extends PacketBuff {
     public ServerBuff(TCP.Client client) {
         super(client);
     };
-    public String getReqCStr() {
+    public String readReqCStr() {
         int start,stop;
         start= this.request.position();
         stop= start;
@@ -99,11 +126,5 @@ public abstract class ServerBuff extends PacketBuff {
         this.response.position(0);
         this.response.get(result);
         return this.response.array();
-    };
-    @Override public void run() {
-        int limit= 4;
-        while(running && (limit--) > 0) {
-            System.out.println("Ran thread.  ");
-        };
     };
 };

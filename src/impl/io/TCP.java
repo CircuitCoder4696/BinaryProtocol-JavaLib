@@ -8,13 +8,14 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 
 public class TCP {
-    public static class Server {
+    public static class Server implements server_t {
         public boolean running= true;
         private ServerSocket ss;
         public String ipAddr= "127.0.0.1";
         public int port= 8080;
         private ArrayList<Socket> clients= new ArrayList();
-        public Server(int port) {
+        public Server(boolean exposeSocket, int port) {
+            if(exposeSocket)this.ipAddr= "0.0.0.0";
             this.port= port;
             try {
                 this.ss= new ServerSocket(port);
@@ -32,7 +33,7 @@ public class TCP {
             return null;
         };
     };
-    public static class Client {
+    public static class Client implements client_t {
         static byte[] reqD= new byte[65536];
         static Logger log= new Logger();
         InputStream iStream;

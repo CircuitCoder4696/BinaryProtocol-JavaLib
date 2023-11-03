@@ -25,6 +25,7 @@ public class Logger {   //   Provides the logging-capability for the server.
             sb.append(new Date());
             sb.append("   ");
             sb.append(System.nanoTime());
+            int i00= sb.length() +1;
             switch(type) {
                 case DEBUG:
                     sb.append(" [debug] ");
@@ -47,8 +48,8 @@ public class Logger {   //   Provides the logging-capability for the server.
             sb.append(" @");
             sb.append(line);
             sb.append(":   ");
-            sb.append(message);
-            if(printToScreen)System.out.println(sb.toString());
+            sb.append(message.replaceAll("\n","\n\t"));
+            if(printToScreen)System.out.println(sb.toString().substring(i00));
             sb.append('\n');
             try {
                 impl.fos.write(sb.toString().getBytes());

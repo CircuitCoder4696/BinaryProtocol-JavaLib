@@ -5,7 +5,7 @@ import impl.io.TCP;
 
 public class TestServer extends ServerBuff {
     public static void main(String[] av) {
-        TCP.Server server= new TCP.Server(25600);
+        TCP.Server server= new TCP.Server(true, 25600);
         while(server.running) {
             TCP.Client client= server.__accept();
             log.info("Server accepted client.  ");

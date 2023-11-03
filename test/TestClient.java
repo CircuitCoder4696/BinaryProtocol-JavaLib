@@ -9,7 +9,6 @@ public class TestClient extends ClientBuff {
         TestClient buff= new TestClient(client);
         buff.onSend(client);   //   Writes data to the buffer.
         client.write(buff);   //   Sends the buffer data in a packet.
-        //Error:   The server doesn't seem to be writing the correct response for some reason.
         client.read(buff);   //   Recieves a packet and places the data into the buffer.
         buff.onRecv(client);   //   Reads data from the buffer.
     };
